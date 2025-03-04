@@ -18,7 +18,7 @@ def arithmetic_arranger(problems, show_answers=False):
   #? Expresion||Iterate outer loop||If any var(num) matches condition >= 10000||Iterate inner loop||Returns inv NUMBER
   result = ['Error: Numbers cannot be more than four digits.' for i in problems if any(float(num) >= 10000 for num in re.findall(r'\d+', i))]
   if result:
-    return result
+    return " ".join(result)
   
   line1 = ''
   line2 = ''
@@ -69,7 +69,7 @@ def arithmetic_arranger(problems, show_answers=False):
 
 
     
-print(f'\n{arithmetic_arranger(["24 + 8521", "3801 - 2", "45 + 43", "123 + 49"], True)}')
+print(f'\n{arithmetic_arranger(["24 + 85297", "3801 - 2", "45 + 43", "123 + 49"], True)}')
 
 
 
