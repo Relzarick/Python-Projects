@@ -3,7 +3,7 @@ import re
 def arithmetic_arranger(problems, show_answers=False):
   #* Checks for non digits and ^+-
   matches = re.findall(r"[^\d\s\[\]\"',+-]", str(problems)) 
-  answer = 0
+  
   
   if len(problems) > 5:
     return 'Error: Too many problems.'
@@ -20,12 +20,19 @@ def arithmetic_arranger(problems, show_answers=False):
   if result:
     return result
 
-  # use split with a for loop
-  # maybe use comprhesion
-  # overall in a for loop?
+  answer = 0
   
+  for problem in problems:
+    num1 = float(problem.split(' ')[0])
+    operator = problem.split(' ')[1]
+    num2 = float(problem.split(' ')[2])
 
-  
+    if operator == '+':
+      answer = num1 + num2
+    else:
+      answer = num1 - num2
+
+    
 
   
 
