@@ -1,4 +1,4 @@
-class nig:
+class student:
   def __init__(self, name, color, gpa, is_gay):
     self.name = name
     self.color = color
