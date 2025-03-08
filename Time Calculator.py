@@ -31,7 +31,7 @@ def add_time(start, duration, date = ""):
         hours -= 1200
 
 
-  hour = int(str(hours)[:-2])
+  hour = int(str(hours)[:-2]) if len(str(hours)) > 2 else 0
   minutes = int(str(hours)[-2:])
   
   while int(minutes) >= 60:
@@ -68,5 +68,5 @@ def add_time(start, duration, date = ""):
       return f'{formated_time}'
       
  
-print(add_time('12:00 PM', '1:00'))
+print(add_time('11:00 PM', '1:00'))
 
