@@ -15,9 +15,22 @@ class Board:
         return num not in self.board[row]
 
 
-    #* Loop through the range(0-8)||Check if every (col) has (num), all() return True if everything !=
+   
     def valid_in_col(self, col, num):
+         #* Loop through 0-8||If every row/col != (num), all() return True
         return all(self.board[row][col] != num for row in range(9))
+    
+
+    #* (parem // 3) * 3||Gets where the row/col 3*3 starts from i.e. 
+    def valid_in_square(self, row, col, num):
+        row_start = (row // 3) * 3
+        col_start = (col // 3) * 3
+        #* Loops through starting row/col and ends before +3
+        for row_no in range(row_start, row_start + 3):
+            for col_no in range(col_start, col_start + 3):
+                if self.board[row_no][col_no] == num:
+                    return False
+        return True
     
 puzzle = [
   [0, 0, 2, 0, 0, 8, 0, 0, 0],
