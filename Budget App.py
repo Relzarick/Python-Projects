@@ -5,48 +5,55 @@ class Category:
         self.initial = False
         self.total = 0
 
-
+    #! Use dictionaries for structured data
+    
     def __str__(self):
+        #! transfer is **** because of below
         ledger_str = f'{self.category.center(30, '*')}\n'
-        #Todo spacing between parems(limit desc to 23 chara)
-        #TODO amt  use rjust, use float, max 7 chara
-        for i in self.ledger:
-            ledger_str += f'{i}\n'
-        ledger_str += f'Total: {self.total}\n'
+
+        for i in range(len(self.ledger)):
+            #* justify both direction to ensure correct spacing
+            description = self.ledger[i]['description'][:23].ljust(23)
+            amount = f'{self.ledger[i]['amount']}'.rjust(7)
+            ledger_str += f'{description}{amount}\n'
         return ledger_str
 
-    def deposit(self, amt, description = '', transfer = 0):
+
+    def deposit(self, amt, description = '', transfer = False):
         if not self.initial and description.lower() == 'deposit':
-            self.ledger.append(f'Initial {description} {amt}')
+            self.ledger.append({'amount': amt, 'description': f'Initial {description}'})
             self.initial = True
             self.total += amt
-        elif transfer == 1:
-            self.ledger.append(f'Transfer from {description} {amt}')
+        elif transfer:
+            self.ledger.append({'amount': amt, 'description': f'Transfer from {description}'})
             self.total += amt
         else:
-            self.ledger.append(f'{description} {amt}')
+            self.ledger.append({'amount': amt, 'description': description})
             self.total += amt
         
 
     def withdraw(self, amt, description):
         if self.check_funds(amt):
-            self.ledger.append(f'{description} -{amt}')
+            self.ledger.append({'amount': f'-{amt}', 'description': description})
             self.total -= amt
             return True
         else:
             return False
     
+
     def get_balance(self):
         print(self.total)
 
+
     def transfer(self, amt, category):
         if self.check_funds(amt):
-            self.ledger.append(f'Transfer to {category.category} -{amt}')
+            self.ledger.append({'amount': f'-{amt}', 'description': f'Transfer to {category}'})
+            category.deposit(amt, self.category, True)
             self.total -= amt
-            category.deposit(amt, self.category, 1)
             return True
         else:
             return False
+
 
     def check_funds(self, amt):
         if amt > self.total:
@@ -61,12 +68,12 @@ niers = Category('niers')
 
 food.deposit(10000, 'deposit')
 food.transfer(1000, niers)
-food.withdraw(4000, 'nis')
+food.withdraw(4000, '12345678901234567890123456')
 
 # food.get_balance()
 
 print(food)
-print(niers)
+# print(niers)
 
 
 #TODO takes a list of cats
