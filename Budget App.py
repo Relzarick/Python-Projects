@@ -5,13 +5,16 @@ class Category:
         self.initial = False
         self.total = 0
 
+
     def __str__(self):
-        ledger_str = f'{self.category}\n'
+        ledger_str = f'{self.category.center(30, '*')}\n'
+        #Todo spacing between parems(limit desc to 23 chara)
+        #TODO amt  use rjust, use float, max 7 chara
         for i in self.ledger:
             ledger_str += f'{i}\n'
+        ledger_str += f'Total: {self.total}\n'
         return ledger_str
 
-    #Todo spacing between parems
     def deposit(self, amt, description = '', transfer = 0):
         if not self.initial and description.lower() == 'deposit':
             self.ledger.append(f'Initial {description} {amt}')
@@ -66,6 +69,10 @@ print(food)
 print(niers)
 
 
-
+#TODO takes a list of cats
+#TODO returns a string(bar chart)
+#TODO round down nearest 10
+#TODO cat name go vert down
+#TODO title up top says (Percentage spent by category)
 def create_spend_chart(categories):
     pass
