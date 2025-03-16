@@ -40,7 +40,7 @@ def arithmetic_arranger(problems, show_answers=False):
 
     #* rjust() is inclusive of str
     length = max(len(num1), len(num2)) + 2
-    print(length)
+    # print(length)
     top = str(num1).rjust(length)
     #* -1 here because of +2 prior (THIS IS FOR THE SPACING BETWEEN OPERATOR)
     bottom = operator + str(num2).rjust(length - 1)
@@ -69,7 +69,7 @@ def arithmetic_arranger(problems, show_answers=False):
 
 
     
-print(f'\n{arithmetic_arranger(["24 + 85297", "3801 - 2", "45 + 43", "123 + 49"], True)}')
+print(f'\n{arithmetic_arranger(["24 + 8527", "3801 - 2", "45 + 43", "123 + 49"], True)}')
 
 
 
