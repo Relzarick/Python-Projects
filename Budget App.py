@@ -23,11 +23,11 @@ class Category:
 
     def deposit(self, amt, description = '', transfer = False):
         if not self.initial and description.lower() == 'deposit':
-            self.ledger.append({'amount': amt, 'description': f'Initial {description}'})
+            self.deposit(amt, "Initial deposit")
             self.initial = True
             self.total += amt
         elif transfer:
-            self.ledger.append({'amount': amt, 'description': f'Transfer from {description}'})
+            self.deposit(amt, f"Transfer from {description}")
             self.total += amt
         else:
             self.ledger.append({'amount': amt, 'description': description})
@@ -78,13 +78,10 @@ niers.withdraw(1, 'niy')
 
 # food.get_balance()
 
-# print(food)
-# print(niers)
+print(food)
+print(niers)
 
 
-
-#todo only calc withdrawals (denote with 0)
-#TODO round down nearest 10
 cat_list = [food, niers, foods]
 
 
@@ -114,4 +111,7 @@ def create_spend_chart(categories):
     
     print(output_str)
 
-create_spend_chart(cat_list)
+# create_spend_chart(cat_list)
+
+#? (withdrawals/ Total Amount) * 100 (remember to round down)
+#* then represent with 0 and append to the chart
