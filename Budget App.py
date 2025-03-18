@@ -10,20 +10,27 @@ class Category:
         self.withdrawals = 0
 
     #! Use dictionaries for structured data
-    #TODO some of the amount is not 2 decimal places (maybe change it to int and decimal magic first???)
+   
     def __str__(self):
         ledger_str = f'{self.category.center(30, "*")}\n'
 
-        for i in range(len(self.ledger)):
+        for i in range(len(self.ledger)): # list
             #* justify both direction to ensure correct spacing
-            description = self.ledger[i]['description'][:23].ljust(23)
-            amount = f'{self.ledger[i]["amount"]}'.rjust(7)
-            ledger_str += f'{description}{amount}\n'
+            amount = f'{float(self.ledger[i]["amount"]):.2f}'.rjust(7)
+            #* length is used to determine length of discription and padding
+            length = 29 - len(amount)
+            description = self.ledger[i]['description'][:length].ljust(length)
+            
+            ledger_str += f'{description} {amount}\n'
         ledger_str += f'Total: {self.total}\n'
         return ledger_str
 
 
     def deposit(self, amt, description = '', transfer = False):
+        if amt >= 10000:
+            self.ledger.append({'amount': '0', 'description': "Over 10k's tough, bruv"})
+            return False
+        
         if not self.initial and description.lower() == 'deposit':
             self.deposit(amt, "Initial deposit")
             self.initial = True
@@ -60,7 +67,12 @@ class Category:
 
 
     def check_funds(self, amt):
+        if amt >= 10000:
+            self.ledger.append({'amount': '0', 'description': "Over 10k's tough, bruv"})
+            return False
+
         if amt > self.total:
+            self.ledger.append({'amount': '0', 'description': 'Not Enough Money Bruh'})
             return False
         else:
             return True
@@ -68,26 +80,28 @@ class Category:
 
 
 food = Category('Food')
-foods = Category('Clothing')
+clothing = Category('Clothing')
 auto = Category('auto')
 
 
 
-auto.deposit(1000, 'deposiT') 
+auto.deposit(1000, 'deposit') 
 
-#TODO something wrong with how the percentages are calc?????? 🗿
+#t something wrong with how the percentages are calc?????? 🗿
 
-food.deposit(900, 'deposit')
-food.withdraw(405.67, 'milk, cereal, eggs, bacon, bread')
+food.deposit(5000, 'deposit')
+clothing.deposit(8000, 'deposit')
+food.withdraw(4000, 'milk, cereal, eggs, bacon, bread')
+clothing.withdraw(2000, 'nig')
 food.transfer(1000, auto)
 
 
 
-print(food)
-print(auto)
+# print(food)
+# print(auto)
 
 
-cat_list = [food, auto, foods]
+cat_list = [food, auto, clothing]
 
 
 def create_spend_chart(categories):
