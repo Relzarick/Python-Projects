@@ -5,61 +5,55 @@ class Category:
     def __init__(self, category):
         self.ledger = []
         self.category = category
-        self.initial = False
+        self.initial = True
         self.total = 0
         self.withdrawals = 0
+        self.total_deposited = 0
 
     #! Use dictionaries for structured data
-   
+    #t length is not 23 
     def __str__(self):
         ledger_str = f'{self.category.center(30, "*")}\n'
 
         for i in range(len(self.ledger)): # list
             #* justify both direction to ensure correct spacing
             amount = f'{float(self.ledger[i]["amount"]):.2f}'.rjust(7)
-            #* length is used to determine length of discription and padding
+            #* length is used to determine length of description and padding
             length = 29 - len(amount)
             description = self.ledger[i]['description'][:length].ljust(length)
             
             ledger_str += f'{description} {amount}\n'
-        ledger_str += f'Total: {self.total}\n'
+        ledger_str += f'Total: {round(self.total, 2)}\n'
         return ledger_str
 
 
-    def deposit(self, amt, description = '', transfer = False):
-        if amt >= 10000:
-            self.ledger.append({'amount': '0', 'description': "Over 10k's tough, bruv"})
-            return False
-        
+    def deposit(self, amt, description = ''):
         if not self.initial and description.lower() == 'deposit':
             self.deposit(amt, "Initial deposit")
             self.initial = True
-        elif transfer:
-            self.deposit(amt, f"Transfer from {description}")
         else:
             self.ledger.append({'amount': amt, 'description': description})
             self.total += amt
+            self.total_deposited += amt
         
 
-    def withdraw(self, amt, description):
+    def withdraw(self, amt, description = ''):
         if self.check_funds(amt):
-            self.ledger.append({'amount': f'-{amt}', 'description': description})
+            self.ledger.append({'amount': -amt, 'description': description})
             self.total -= amt
             self.withdrawals += amt
             return True
         else:
             return False
     
-
     def get_balance(self):
-        print(self.total)
-
+        return self.total
 
     def transfer(self, amt, category):
         if self.check_funds(amt):
             #* category.category to access target avoids the *
-            self.ledger.append({'amount': f'-{amt}', 'description': f'Transfer to {category.category}'})
-            category.deposit(amt, self.category, True)
+            self.ledger.append({'amount': -amt, 'description': f'Transfer to {category.category}'})
+            category.deposit(amt, f'Transfer from {self.category}')
             self.total -= amt
             return True
         else:
@@ -67,9 +61,9 @@ class Category:
 
 
     def check_funds(self, amt):
-        if amt >= 10000:
-            self.ledger.append({'amount': '0', 'description': "Over 10k's tough, bruv"})
-            return False
+        # if amt >= 10000:
+        #     self.ledger.append({'amount': '0', 'description': "Over 10k's tough, bruv"})
+        #     return False
 
         if amt > self.total:
             self.ledger.append({'amount': '0', 'description': 'Not Enough Money Bruh'})
@@ -78,41 +72,18 @@ class Category:
             return True
 
 
-
-food = Category('Food')
-clothing = Category('Clothing')
-auto = Category('auto')
-
-
-
-auto.deposit(1000, 'deposit') 
-
-#t something wrong with how the percentages are calc?????? 🗿
-
-food.deposit(5000, 'deposit')
-clothing.deposit(8000, 'deposit')
-food.withdraw(4000, 'milk, cereal, eggs, bacon, bread')
-clothing.withdraw(2000, 'nig')
-food.transfer(1000, auto)
-
-
-
-# print(food)
-# print(auto)
-
-
-cat_list = [food, auto, clothing]
-
-
 def create_spend_chart(categories):
     output_str = ''
     output_str += 'Percentage spent by category\n'
 
     category_names = [name.category for name in categories]
     withdrawal = [val.withdrawals for val in categories]
-    total = [val.total for val in categories]
+    total = [val.total_deposited for val in categories]
 
     percentages = [math.floor((w / t) * 100 / 10) * 10 if t else 0 for w, t in zip(withdrawal, total)]
+    
+    # print(total)
+    # print(withdrawal)
     # print(percentages)
 
     #* Starting from 100 to 0 in 10s
@@ -139,10 +110,30 @@ def create_spend_chart(categories):
         output_str += "     "
         output_str += f"{'  '.join(row)}\n"
     
-    output_str.rstrip()
-    print(output_str)
+    return output_str.rstrip()
 
-create_spend_chart(cat_list)
+
+food = Category('Food')
+clothing = Category('Clothing')
+auto = Category('auto')
+la = Category('la')
+
+auto.deposit(1000, 'deposit') 
+
+food.deposit(2000, 'deposit')
+food.withdraw(45.67, 'milk, cereal, eggs, bacon, bread')
+food.withdraw(1)
+
+food.transfer(1000, auto)
+
+clothing.deposit(8000, 'deposit')
+clothing.withdraw(2000, 'niy')
+
+print(food)
+print(auto)
+cat_list = [food, clothing, auto, la]
+
+# print(create_spend_chart(cat_list))
 
 
 #! legacy code
