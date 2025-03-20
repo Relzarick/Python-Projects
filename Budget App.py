@@ -8,10 +8,9 @@ class Category:
         self.initial = True
         self.total = 0
         self.withdrawals = 0
-        self.total_deposited = 0
 
     #! Use dictionaries for structured data
-    #t length is not 23 
+
     def __str__(self):
         ledger_str = f'{self.category.center(30, "*")}\n'
 
@@ -19,11 +18,11 @@ class Category:
             #* justify both direction to ensure correct spacing
             amount = f'{float(self.ledger[i]["amount"]):.2f}'.rjust(7)
             #* length is used to determine length of description and padding
-            length = 29 - len(amount)
-            description = self.ledger[i]['description'][:length].ljust(length)
+            length = 30 - len(amount)
+            description = self.ledger[i]['description'][:23].ljust(length)
             
-            ledger_str += f'{description} {amount}\n'
-        ledger_str += f'Total: {round(self.total, 2)}\n'
+            ledger_str += f'{description}{amount}\n'
+        ledger_str += f'Total: {round(self.total, 2)}'
         return ledger_str
 
 
@@ -34,7 +33,6 @@ class Category:
         else:
             self.ledger.append({'amount': amt, 'description': description})
             self.total += amt
-            self.total_deposited += amt
         
 
     def withdraw(self, amt, description = ''):
@@ -71,18 +69,19 @@ class Category:
         else:
             return True
 
-
+#! chart shows percentages of individual category based on total sum of withdrawal
 def create_spend_chart(categories):
     output_str = ''
     output_str += 'Percentage spent by category\n'
 
     category_names = [name.category for name in categories]
     withdrawal = [val.withdrawals for val in categories]
-    total = [val.total_deposited for val in categories]
+    total = (lambda nums: sum(nums))(withdrawal)
 
-    percentages = [math.floor((w / t) * 100 / 10) * 10 if t else 0 for w, t in zip(withdrawal, total)]
+
+    percentages = [math.floor((w / total) * 100 / 10) * 10 if total else 0 for w in withdrawal]
     
-    # print(total)
+    # print(total) 
     # print(withdrawal)
     # print(percentages)
 
@@ -91,12 +90,17 @@ def create_spend_chart(categories):
         #* :>3 is to right align it (no need for \n because its looping)
         line = f'{level:>3}|'
 
-        for per in percentages:
-            #* [20, 100, 0] if matches add 0 
+        #? index then start
+        for i, per in enumerate(percentages):
+            #* check if per meets or exceeds the level (62/60)
             if per >= level:
                 line += ' o '
             else:
+                #* This adds filler if there is no O
                 line += '   '
+                #* If last only add ONE space
+            if i == len(percentages) - 1:
+                line += ' ' 
 
         output_str += f'{line}\n'
     
@@ -104,11 +108,24 @@ def create_spend_chart(categories):
     dashes = '-' * (len(category_names) * 3 + 1)
     output_str += f"    {dashes}\n"
     
+
     #* Iterates the longest, fills shorter with ''||* operator unpacks the names
     for row in zip_longest(*category_names, fillvalue=" "):
-        #* This is to indent the names
+        #* This adds indentation for the names
         output_str += "     "
-        output_str += f"{'  '.join(row)}\n"
+        
+        # print(row)
+        #* Each row contains a tuple of the letters
+        for i, chara in enumerate(row):
+            #* If i is last, append -- 
+            if i == len(row) - 1:  
+                output_str += f"{chara}  "  
+            else:
+                #* This appends the spacing between letters
+                output_str += f"{chara}  "
+
+        #* Append \n after each row for formatting
+        output_str = output_str + "\n"
     
     return output_str.rstrip()
 
@@ -127,15 +144,17 @@ food.withdraw(1)
 food.transfer(1000, auto)
 
 clothing.deposit(8000, 'deposit')
-clothing.withdraw(2000, 'niy')
+clothing.withdraw(5500, 'niy')
 
-print(food)
-print(auto)
+# print(food)
+# print(auto)
 cat_list = [food, clothing, auto, la]
 
-# print(create_spend_chart(cat_list))
+print(create_spend_chart(cat_list))
 
 
 #! legacy code
+#? output_str += f"{'  '.join(row)}\n"
+#? percentages = [math.floor((w / t) * 100 / 10) * 10 if t else 0 for w, t in zip(withdrawal, total)]
 #? :>2 is the f-str alignment(align right)
 #? percent = ' '.join([f'{str(num):>2}|\n' for num in range(100, -1, -10)])
