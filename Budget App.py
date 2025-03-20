@@ -64,7 +64,7 @@ class Category:
         #     return False
 
         if amt > self.total:
-            self.ledger.append({'amount': '0', 'description': 'Not Enough Money Bruh'})
+            # self.ledger.append({'amount': '0', 'description': 'Not Enough Money Bruh'})
             return False
         else:
             return True
@@ -119,7 +119,7 @@ def create_spend_chart(categories):
         for i, chara in enumerate(row):
             #* If i is last, append -- 
             if i == len(row) - 1:  
-                output_str += f"{chara}  "  
+                output_str += f"{chara}--"  
             else:
                 #* This appends the spacing between letters
                 output_str += f"{chara}  "
@@ -127,7 +127,10 @@ def create_spend_chart(categories):
         #* Append \n after each row for formatting
         output_str = output_str + "\n"
     
-    return output_str.rstrip()
+    return output_str.rstrip('\n')
+    # print(output_str.rstrip())
+    # print(output_str.rstrip('\n'))
+    # print(output_str.rstrip() is output_str.rstrip('\n'))
 
 
 food = Category('Food')
@@ -146,11 +149,12 @@ food.transfer(1000, auto)
 clothing.deposit(8000, 'deposit')
 clothing.withdraw(5500, 'niy')
 
-# print(food)
-# print(auto)
-cat_list = [food, clothing, auto, la]
+print(food)
+print(auto)
+cat_list = [food,auto, la, clothing]
 
 print(create_spend_chart(cat_list))
+# create_spend_chart(cat_list)
 
 
 #! legacy code
