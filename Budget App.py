@@ -119,7 +119,7 @@ def create_spend_chart(categories):
         for i, chara in enumerate(row):
             #* If i is last, append -- 
             if i == len(row) - 1:  
-                output_str += f"{chara}--"  
+                output_str += f"{chara}  "  
             else:
                 #* This appends the spacing between letters
                 output_str += f"{chara}  "
@@ -129,7 +129,7 @@ def create_spend_chart(categories):
     
     return output_str.rstrip('\n')
     # print(output_str.rstrip())
-    # print(output_str.rstrip('\n'))
+    # print(output_str.rstrip('--'))
     # print(output_str.rstrip() is output_str.rstrip('\n'))
 
 
