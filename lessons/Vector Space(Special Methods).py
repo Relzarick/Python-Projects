@@ -14,21 +14,44 @@ class R2Vector:
         args = ', '.join(arg_list)
         return f'{self.__class__.__name__}({args})'
 
+    def __add__(self, other):
+        if type(self) != type(other):
+            return NotImplemented
+        kwargs = {i: getattr(self, i) + getattr(other, i) for i in vars(self)}
+        return self.__class__(**kwargs)
 
-    def __getattr__(self, attr):                
-        return 'calling __getattr__'
+    def __sub__(self, other):
+        if type(self) != type(other):
+            return NotImplemented
+        kwargs = {i: getattr(self, i) - getattr(other, i) for i in vars(self)}
+        return self.__class__(**kwargs)
 
+    def __mul__(self, other):
+        if type(other) in (int, float):
+            kwargs = {i: getattr(self, i) * other for i in vars(self)}
+            return self.__class__(**kwargs)        
+        elif type(self) == type(other):
+            args = [getattr(self, i) * getattr(other, i) for i in vars(self)]
+            return sum(args)            
+        return NotImplemented
+    def __eq__(self, other):
+        if type(self) != type(other):
+            return NotImplemented
 class R3Vector(R2Vector):
     def __init__(self, *, x, y, z):
         super().__init__(x=x, y=y)
         self.z = z
 
 v1 = R2Vector(x=2, y=3)
-v2 = R3Vector(x=2, y=2, z=3)
-# print(f'v1 = {v1}', f'\nrepr = {repr(v1)}')
-# print(f'v2 = {v2}', f'\nrepr = {repr(v2)}')
-print(v1.z)
-print(getattr(v1, 'z'))
+v2 = R2Vector(x=0.5, y=1.25)
+print(f'v1 = {v1}')
+print(f'v2 = {v2}')
+v3 = v1 + v2
+print(f'v1 + v2 = {v3}')
+v4 = v1 - v2
+print(f'v1 - v2 = {v4}')
+v5 = v1 * v2
+print(f'v1 * v2 = {v5}')
 
 # * __str__ returns human readable strings
 
@@ -48,3 +71,7 @@ print(getattr(v1, 'z'))
 # * __add__
 
 # * __sub__
+
+# * __mul__
+
+# * __eq__
