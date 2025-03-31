@@ -1,5 +1,5 @@
 from secrets import choice
-from string import ascii_lowercase, ascii_uppercase, digits, punctuation
+from string import ascii_lowercase, ascii_uppercase, ascii_letters, digits, punctuation
 from time import sleep
 import re
 import os
@@ -47,8 +47,9 @@ class PasswordGenerator:
           sleep(.5)
           print("\nThat was an invalid option.\n")
   
+
   def _generator_express(self):
-    str_length = choice(range(10, 17))
+    str_length = choice(range(10, 16))
 
     while True:
       random_str = ''.join(choice(self.random_char) for _ in range(str_length))
@@ -61,31 +62,47 @@ class PasswordGenerator:
 
       random_str = ''.join(choice(random_str) for _ in range(str_length))
 
-      # ! check if i have to add the last parem
-      if self.validate_password(random_str, False, False):
+      if self.validate_password(random_str, False, False, False):
         return random_str
+
 
   def _generator_custom(self, length, ambi, adv):
     random_str = ''.join(choice(self.random_char) for _ in range(length))
-    user_config, (upper_case, lower_case, digits_num, special_char) = adv
+    user_config, (req_upper, req_lower, req_digits, req_special) = adv
     
     ambi_config = False
     adv_config = False
-    
-    if ambi in self.options and ambi in self.user_yes:
-      ambi_config = True
-      random_str = ''.join(choice(self.random_char) if i in self.ambiguous else i for i in random_str)
-      
-    if user_config in self.options and user_config in self.user_yes:
-      adv_config = True
 
-      while True:
-        # t this will keep looping until all the requirements are met before breaking
-        break
-      
+    while True:
+
+      if ambi in self.user_yes:
+        ambi_config = True
+        random_str = ''.join(choice(self.random_char) if i in self.ambiguous else i for i in random_str)
+        
+      if user_config in self.user_yes:
+        adv_config = True
+
+        filler_length = length - (req_upper + req_lower + req_digits + req_special)
+
+        str_upper = ''
+        str_lower = ''
+        str_digits = ''
+        str_special = ''
+        str_filler = ''
+
+        str_upper = ''.join(choice(ascii_uppercase) for _ in range(req_upper))
+        str_lower = ''.join(choice(ascii_lowercase) for _ in range(req_lower))
+        str_digits = ''.join(choice(digits) for _ in range(req_digits))
+        str_special = ''.join(choice(punctuation) for _ in range(req_special))
+        str_filler = ''.join(choice(self.random_char) for _ in range(filler_length))
+        
+        concat_str = str_upper + str_lower + str_digits + str_special + str_filler
+        random_str = ''.join(choice(concat_str) for _ in range(length))
+    
       if self.validate_password(random_str, ambi_config, adv_config, adv):
         return random_str
     
+
   def validate_password(self, random_str, ambi_enabled, adv_enabled, adv_settings):
 
     has_num = re.search(self.num_re, random_str)
@@ -103,7 +120,7 @@ class PasswordGenerator:
       _, (req_upper, req_lower, req_digits, req_special) = adv_settings
 
       total_upper = sum(1 for c in random_str if c in ascii_uppercase)
-      total_lower = sum(1 for c in random_str if c in ascii_uppercase)
+      total_lower = sum(1 for c in random_str if c in ascii_lowercase)
       total_digits = sum(1 for c in random_str if c in digits) 
       total_special = sum(1 for c in random_str if c in punctuation)
 
@@ -122,6 +139,7 @@ class PasswordGenerator:
     user_config = self._prompt_composition()
 
     print(f"Here is your secure password: {self._generator_custom(self.user_length, ambi, user_config)}\n")
+
 
   def _prompt_length(self):
     while True:
@@ -150,7 +168,7 @@ class PasswordGenerator:
   
 
   def _prompt_composition(self):
-    print("\nBy default, the password will include at least the following:")
+    print("\nBy default, the password will include at least the following (Inputs besides a int will default to 1):")
     print("1. One uppercase letter")
     print("2. One lowercase letter")
     print("3. One digit")
@@ -172,27 +190,34 @@ class PasswordGenerator:
 
   def _adv_config(self):
     while True:
-      upper_case = int(input("\nEnter the minimun number of uppercase letters to include: "))
-      lower_case = int(input("Enter the minimum number of lowercase letters to include: "))
-      digits = int(input("Enter the minimum number of digits to include: "))
-      special_char = int(input("Enter the minimum number of special characters to include: "))
+      prompt_upper = input("\nEnter the minimun number of uppercase letters to include: ").strip()
+      upper_case = int(prompt_upper) if prompt_upper.isdigit() else 1
 
-      total_char = upper_case + lower_case + digits + special_char
+      prompt_lower = input("Enter the minimum number of lowercase letters to include: ").strip()
+      lower_case = int(prompt_lower) if prompt_lower.isdigit() else 1
 
-      if total_char < self.user_length:
-        return upper_case, lower_case, digits, special_char
-      else:
+      prompt_digits = input("Enter the minimum number of digits to include: ").strip()
+      digit = int(prompt_digits) if prompt_digits.isdigit() else 1
+
+      prompt_special = input("Enter the minimum number of special characters to include: ").strip()
+      special_char =  int(prompt_special) if prompt_special.isdigit() else 1
+
+      total_char = upper_case + lower_case + digit + special_char
+          
+      if total_char > self.user_length:
         print(f'\nYou have exceeded your desired password length.\n')
+      else:
+        return upper_case, lower_case, digit, special_char
   
 
 
 if __name__ == '__main__':
   main = PasswordGenerator()
-  # main.prompt()
-  main._prompt_custom()
+  main.prompt()
+  # main._prompt_custom()
+
   
 
- 
 
 # ! Dual mode 
 # ! Utilize Python's secrets module 
