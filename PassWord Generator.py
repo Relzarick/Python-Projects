@@ -1,5 +1,5 @@
 from secrets import choice
-from string import ascii_lowercase, ascii_uppercase, ascii_letters, digits, punctuation
+from string import ascii_lowercase, ascii_uppercase, digits, punctuation
 from time import sleep
 import re
 import os
