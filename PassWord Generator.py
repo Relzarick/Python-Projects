@@ -61,10 +61,8 @@ class PasswordGenerator:
 
       random_str = ''.join(choice(random_str) for _ in range(str_length))
 
-      has_num = re.search(self.num_re, random_str)
-      has_cap = re.search(self.letter_re, random_str)
-
-      if has_num and has_cap:
+      # ! check if i have to add the last parem
+      if self.validate_password(random_str, False, False):
         return random_str
 
   def _generator_custom(self, length, ambi, adv):
@@ -78,26 +76,20 @@ class PasswordGenerator:
       ambi_config = True
       random_str = ''.join(choice(self.random_char) if i in self.ambiguous else i for i in random_str)
       
-      
     if user_config in self.options and user_config in self.user_yes:
       adv_config = True
+
       while True:
         # t this will keep looping until all the requirements are met before breaking
-        pass
+        break
       
-
+      if self.validate_password(random_str, ambi_config, adv_config, adv):
+        return random_str
+    
+  def validate_password(self, random_str, ambi_enabled, adv_enabled, adv_settings):
     has_num = re.search(self.num_re, random_str)
     has_cap = re.search(self.letter_re, random_str)
     has_ambi = re.search(self.ambi_re, random_str)
-    
-
-    # t do the checks then return value if configs are active
-    if ambi_config or adv_config:
-      # t have to add a final validation to check all requiremnet are met first
-      # ? exclude = ['o', '0', 'i', '1'] try this for validation?
-
-      if has_num and has_cap:
-        return random_str
     
 
   def _prompt_custom(self):
@@ -106,8 +98,6 @@ class PasswordGenerator:
     ambi = self._prompt_ambi()
     sleep(.3)
     user_config = self._prompt_composition()
-
-    # ('y', (1, 1, 1, 1))
 
     print(f"Here is your secure password: {self._generator_custom(self.user_length, ambi, user_config)}\n")
 
