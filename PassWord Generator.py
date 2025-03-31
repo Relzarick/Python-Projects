@@ -84,12 +84,6 @@ class PasswordGenerator:
 
         filler_length = length - (req_upper + req_lower + req_digits + req_special)
 
-        str_upper = ''
-        str_lower = ''
-        str_digits = ''
-        str_special = ''
-        str_filler = ''
-
         str_upper = ''.join(choice(ascii_uppercase) for _ in range(req_upper))
         str_lower = ''.join(choice(ascii_lowercase) for _ in range(req_lower))
         str_digits = ''.join(choice(digits) for _ in range(req_digits))
