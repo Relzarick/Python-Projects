@@ -1,12 +1,12 @@
 from secrets import choice
-from string import ascii_letters, ascii_uppercase, digits, punctuation
+from string import ascii_lowercase, ascii_uppercase, digits, punctuation
 from time import sleep
 import re
 import os
 
 class PasswordGenerator:
   def __init__(self):
-    self.random_char = ascii_letters + digits + punctuation
+    self.random_char = ascii_lowercase + ascii_uppercase + digits + punctuation
     self.user_length = None
 
     self.terminal_width = os.get_terminal_size().columns
@@ -87,9 +87,31 @@ class PasswordGenerator:
         return random_str
     
   def validate_password(self, random_str, ambi_enabled, adv_enabled, adv_settings):
+
     has_num = re.search(self.num_re, random_str)
     has_cap = re.search(self.letter_re, random_str)
     has_ambi = re.search(self.ambi_re, random_str)
+
+    if not has_num and has_cap:
+      return False
+    
+    if ambi_enabled:
+      if has_ambi:
+        return False
+      
+    if adv_enabled:
+      _, (req_upper, req_lower, req_digits, req_special) = adv_settings
+
+      total_upper = sum(1 for c in random_str if c in ascii_uppercase)
+      total_lower = sum(1 for c in random_str if c in ascii_uppercase)
+      total_digits = sum(1 for c in random_str if c in digits) 
+      total_special = sum(1 for c in random_str if c in punctuation)
+
+      # * Total must at least reach the specified minimum requirements. 
+      if total_upper < req_upper or total_lower < req_lower or total_digits < req_digits or total_special < req_special:
+        return False
+
+    return True
     
 
   def _prompt_custom(self):
@@ -138,8 +160,10 @@ class PasswordGenerator:
       user_config = input("\nWould you like to also customize these settings? (Y or N): ").strip().lower()
 
       if user_config in self.options:
+
         if user_config in self.user_yes:
           return user_config, self._adv_config()
+        
         return user_config, (1, 1, 1, 1)
       else:
         sleep(.3)
@@ -148,10 +172,10 @@ class PasswordGenerator:
 
   def _adv_config(self):
     while True:
-      upper_case = int(input("\nEnter the number of uppercase letters to include: "))
-      lower_case = int(input("Enter the number of lowercase letters to include: "))
-      digits = int(input("Enter the number of digits to include: "))
-      special_char = int(input("Enter the number of special characters to include: "))
+      upper_case = int(input("\nEnter the minimun number of uppercase letters to include: "))
+      lower_case = int(input("Enter the minimum number of lowercase letters to include: "))
+      digits = int(input("Enter the minimum number of digits to include: "))
+      special_char = int(input("Enter the minimum number of special characters to include: "))
 
       total_char = upper_case + lower_case + digits + special_char
 
